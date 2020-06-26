@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        include partials/header
+        link(rel="stylesheet", href="/css/Sesion.css")
+    body.login
+        .contenedor-formulario
+            if locals.mensajes
+                .alertas
+                    each categoria in Object.keys(locals.mensajes)
+                        each error in mensajes[categoria]
+                            .alerta(class=`${categoria}`)
+                                p= error
+            .container.login-container
+                .row
+                    .col-md-6.login-form-2
+                        h3 Iniciar sesión
+                        form(method="POST" action ="/iniciar-sesion")
+                            .form-group
+                                input.form-control(type="email", name="email" placeholder='Email' required autofocus
+                                value= email)
+                            .form-group
+                                input.form-control(type="password", name="password" placeholder="password"
+                                value= password)
+                            .form-group
+                                input.btn.btn-success(type="submit")
+                                br
+                                br
+                                a.ForgetPwd(href="/crear-cuenta") ¿Aun no tienes cuenta? Crea una gratis
+                                br
+                                br
+                                a.ForgetPwd(href="/reestablecer") ¿olvidaste tu contraseña?

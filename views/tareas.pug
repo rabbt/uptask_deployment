@@ -1,0 +1,48 @@
+extends layout
+block contenido
+    .jumbotron.jumbotron-fluid
+        h5.container #{nombrePagina} - #{proyecto.nombre}
+        form.form-inline(action=`/proyectos/${proyecto.url}` method="POST")
+            .form-group.mx-sm-3.mb-2
+            .container
+                label(for="tarea")
+                    input.form-control.form-control-lg(type="text", name="tarea" placeholder='Nombre Tarea')
+                label(for="")
+                    input.btn.btn-primary.m-3.p-2(type='submit' value='Agregar')
+
+        
+    .listado-pendientes
+        ul
+            if tareas.length
+                // tarea yo lo defino tareas esta en el controlador
+                each tarea in tareas
+                    li.tarea(data-tarea=tarea.id)
+                        p=tarea.tarea
+                        .acciones  
+                            if tarea.estado
+                                i.far.fa-check-circle.completo
+                            else
+                                i.far.fa-check-circle
+                            i.fas.fa-trash
+            else
+                p No hay tareas en este proyecto
+
+        //avance del proyecto
+    .avance
+        h4 Avance del proyecto
+        .progress
+            .progress-bar.progress-bar-striped.bg-success(role="progressbar" )           
+            #porcentaje.porcentaje
+        
+        //parametro ? tareas ? proyecto
+            h3 seccion de desarrollo jsons
+            pre=vardump(tareas) 
+        
+        //ACCIONES
+        .container
+            .row
+                .col-6
+                    a.btn.btn-warning.m-4( type="button" href=`/proyecto/editar/${proyecto.id}`) Editar Proyecto
+                .col-6
+                    button.btn.btn-danger.m-4#eliminar-proyecto(data-proyecto-url=proyecto.url type="button" ) Eliminar Proyecto
+        
