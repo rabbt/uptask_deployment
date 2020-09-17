@@ -1,9 +1,9 @@
-extends layout
+extends layoutE
 block contenido
     .jumbotron.jumbotron-fluid
         h3.container Proyecto - #{proyecto.nombre} 
         h3.container Responsable - #{proyecto.responsable}
-        form.form-inline(action=`/proyectos/${proyecto.url}` method="POST")
+        //form.form-inline(action=`/proyectos/${proyecto.url}` method="POST")
             .form-group.mx-sm-3.mb-2
             .container
                 label(for="tarea")
@@ -42,8 +42,8 @@ block contenido
             h3 seccion de desarrollo jsons
             pre=vardump(tareas) 
         
-        //ACCIONES
-        .container
+        //ACCIONES no disponible en vistas para empleado
+        //.container
             .row
                 .col-6
                     a.btn.btn-warning.btn-lg.m-4( type="button" href=`/proyecto/editar/${proyecto.id}`) Editar Proyecto

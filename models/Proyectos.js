@@ -9,13 +9,23 @@ const Proyectos = db.define('proyectos', {
         primaryKey: true,
         autoIncrement:true
     },
-
+    
     nombre: Sequelize.STRING(100),
     url: Sequelize.STRING(100),
+    
+    responsable: Sequelize.STRING(10),
+    
+    //TODO: BUSCAR PARAMETRO DE (DATE)
+    fechaInicio: Sequelize.STRING(100),
+
+    fechaFinal: Sequelize.STRING(100),
+
+
+    
 }, {
     hooks: {
         beforeCreate(proyecto) {
-            const url = slug(proyecto.nombre).toLowerCase()
+            const url = slug(proyecto.nombre, proyecto.responsable).toLowerCase()
 
             proyecto.url = `${url}-${shortid.generate()}`;
         }

@@ -9,7 +9,7 @@ html(lang="en")
                 .alertas
                     each categoria in Object.keys(locals.mensajes)
                         each error in mensajes[categoria]
-                            .alerta(class=`${categoria}`)
+                            .alert.alert-danger(class=`${categoria}`)
                                 p= error
             .container.login-container
                 .row

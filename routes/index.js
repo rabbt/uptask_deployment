@@ -18,13 +18,16 @@ module.exports = function() {
         proyectosController.proyectosHome
     );
     router.get('/nuevo-proyecto',
-
-        proyectosController.formularioProyecto
+        proyectosController.formularioProyecto,
+        usuariosController.getAllUsers
+        
     );
+
     router.post('/nuevo-proyecto', 
     authController.usuarioAutenticado,
         body('nombre').not().isEmpty().trim().escape(),
-        proyectosController.nuevoProyecto
+        proyectosController.nuevoProyecto,
+      
     );
 
     // Listar Proyecto
@@ -41,7 +44,7 @@ module.exports = function() {
 
     router.post('/nuevo-proyecto/:id', 
         authController.usuarioAutenticado,
-        body('nombre').not().isEmpty().trim().escape(),
+        body('nombre', 'responsable').not().isEmpty().trim().escape(),
         proyectosController.actualizarProyecto
 );    
 
@@ -92,10 +95,26 @@ module.exports = function() {
         tareasController.cambiarEstadoTarea
     );
 
+    // Listar Proyecto para empleados
+    router.get('/proyectosempleados/:url', 
+        authController.usuarioAutenticado,
+        proyectosController.proyectoEmpleado
+    );
+
+    router.get('/empleados',
+        authController.usuarioAutenticado,
+        proyectosController.empleadosVista,
+        tareasController.cambiarEstadoTarea
+    )
+
+    // TODO: ELIMINAR TODO LO REFERNTE A ESTA PRUEBA DE LLAMADO (NO FUNCIONO COMO SE ESPEREBA)
+    router.get('/cargar-usuarios',
+        usuariosController.getAllUsers
+    )
+
     // router.patch('/proyectos-all/:id', 
     // authController.usuarioAutenticado,
     // tareasController.cambiarEstadoTarea)
 
     return router;
 }
-

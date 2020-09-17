@@ -1,12 +1,17 @@
 const Proyectos = require('../models/Proyectos');
 const Tareas = require('../models/Tareas');
+const Usuarios = require('../models/Usuarios');
+
+//const getAllUsers = require('./usuariosController');
 
 exports.proyectosHome = async (req, res) => {
 
     // console.log(res.locals.usuario);
 
     const usuarioId = res.locals.usuario.id;
+    
     const proyectos = await Proyectos.findAll({where: { usuarioId  }});
+
 
     res.render('index', {
         nombrePagina : 'Proyectos',
@@ -22,63 +27,96 @@ exports.proyectosAll = async (req, res) => {
     const usuarioId = res.locals.usuario.id;
     const proyectos = await Proyectos.findAll({where: { usuarioId  }});
 
-
-
-    //////////////////////////////////////////////
-    // const { id } = req.params;
-    // const tarea = await Tareas.findOne({where: { id }})
-    
-    // console.log(tarea)
-
-    // //cambair el estado
-    // let estado = 0;
-    // if(tarea.estado === estado){
-    //     estado = 1;
-    // }
-
-    // tarea.estado = estado;
-
-    // const resultado =  await tarea.save();
-
-    // if(!resultado) return next();
-
-    // res.status(200).send('Actualizando')
-    //////////////////////////////////////////////
-
     res.render('proyectos', {
-        //nombrePagina : 'Proyectos',
+        nombrePagina : 'Proyectos',
         proyectos
     });
 }
-////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////vista de proyectos empleados/////////////////////////////////////////
+exports.empleadosVista = async (req, res) => {
+
+    // console.log(res.locals.usuario);
+
+    const usuarioId = res.locals.usuario.id;
+    const proyectos = await Proyectos.findAll({where: { usuarioId  }});
+
+    res.render('empleados', {
+        nombrePagina : 'Vista Proyectos (empleados)',
+        proyectos
+    });
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
 
 exports.formularioProyecto = async (req, res) => {
     const usuarioId = res.locals.usuario.id;
     const proyectos = await Proyectos.findAll({where: { usuarioId  }});
+    const responsable = res.locals.usuario.responsable;
+    const fechaInicio = res.locals.usuario.fechaInicio;
+    const fechaFinal = res.locals.usuario.fechaFinal;
+
+    // const usuariosAll = await Usuarios.findAll({
+    //     where: {activo:1}
+    // });
 
     res.render('nuevoProyecto', {
         nombrePagina: 'Nuevo Proyecto',
-        proyectos
+        proyectos,
+        responsable,
+        fechaInicio,
+        fechaFinal,
     })
 }
+
+//////////////////////////////////
+/*
+exports.getAllUsers = async(req,res) =>{
+
+    console.log("@f Entre a la funcion obtener usuarios")
+    const usuarios = await Usuarios.findAll(Usuarios.email)
+
+    
+    console.log(usuarios);
+    
+    res.render('usuarios',
+    usuarios)
+}
+*/
+/////////////////////////////////
+
+
 
 exports.nuevoProyecto = async (req, res) => {
 
     const usuarioId = res.locals.usuario.id;
     const proyectos = await Proyectos.findAll({where: { usuarioId  }});
-
-    // Enviar a la consola lo que el usuario escriba.
+    
+    // Enviar a la consola lo que el usuario escriba. 
     // console.log(req.body);
 
     // validar que tengamos algo en el input
+    const responsable = req.body.responsable;
     const nombre = req.body.nombre;
+    const fechaInicio = req.body.fechaInicio;
+    const fechaFinal = req.body.fechaFinal;
 
     let errores = [];
 
     if(!nombre) {
         errores.push({'texto': 'Agrega un Nombre al Proyecto'})
     }
+
+    if(!responsable) {
+        errores.push({'texto': 'Agrega un Responsable al Proyecto'})
+    }
+
+    if(!fechaInicio || !fechaFinal){
+        errores.push({'texto': 'Agrega una fecha valida al proyecto'})
+    } 
 
     // si hay errores
     if(errores.length > 0 ){
@@ -91,8 +129,10 @@ exports.nuevoProyecto = async (req, res) => {
         // No hay errores
         // Insertar en la BD.
         const usuarioId = res.locals.usuario.id;
-        await Proyectos.create({ nombre, usuarioId });
+        await Proyectos.create({ nombre,  responsable, usuarioId, fechaInicio, fechaFinal});
         res.redirect('/proyectos-all');
+
+        
     }
 }
 
@@ -129,14 +169,50 @@ exports.proyectoPorUrl = async (req, res, next) => {
     })
 }
 
+/////////////////////////////////////////////proyecto por url empleados ////////////////////////////////////////
+exports.proyectoEmpleado = async (req, res, next) => {
+    const usuarioId = res.locals.usuario.id;
+    const proyectosPromise = Proyectos.findAll({where: { usuarioId  }});
+
+    const proyectoPromise =  Proyectos.findOne({
+        where: {
+            url: req.params.url, 
+            usuarioId
+        }
+    });
+    const [proyectos, proyecto] = await Promise.all([proyectosPromise, proyectoPromise ]);
+
+    // Consultar tareas del Proyecto actual
+
+    const tareas = await Tareas.findAll({
+        where: {
+            proyectoId : proyecto.id
+        },
+        // include: [
+        //     { model: Proyectos }
+        // ]
+    });
+
+    if(!proyecto) return next();
+    // render a la vista
+    res.render('tareas-empleado', {
+        nombrePagina : 'Tareas del Proyecto',
+        proyecto,
+        proyectos, 
+        tareas
+    })
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 exports.formularioEditar = async (req, res) => {
     const usuarioId = res.locals.usuario.id;
+
     const proyectosPromise = Proyectos.findAll({where: { usuarioId  }});
 
     const proyectoPromise = Proyectos.findOne({
         where: {
             id: req.params.id, 
-            usuarioId
+            usuarioId,
         }
     });
     const [proyectos, proyecto] = await Promise.all([proyectosPromise, proyectoPromise ]);
@@ -154,18 +230,25 @@ exports.formularioEditar = async (req, res) => {
 exports.actualizarProyecto = async (req, res) => {
 
     const usuarioId = res.locals.usuario.id;
-    const proyectos = await Proyectos.findAll({where: { usuarioId  }});
+   
+
+    const proyectos = await Proyectos.findAll({where: { usuarioId }});
 
     // Enviar a la consola lo que el usuario escriba.
     // console.log(req.body);
 
     // validar que tengamos algo en el input
     const nombre = req.body.nombre;
+    const responsable = req.body.responsable;
 
     let errores = [];
 
     if(!nombre) {
         errores.push({'texto': 'Agrega un Nombre al Proyecto'})
+    }
+
+    if(!responsable) {
+        errores.push({'texto': 'Agrega un Responsable al Proyecto'})
     }
 
     // si hay errores
@@ -179,7 +262,7 @@ exports.actualizarProyecto = async (req, res) => {
         // No hay errores
         // Insertar en la BD.
         await Proyectos.update(
-            { nombre: nombre },
+            { nombre: nombre , responsable: responsable},
             { where: { id: req.params.id }} 
         );
         res.redirect('/');

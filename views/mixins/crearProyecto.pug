@@ -1,15 +1,23 @@
-
 mixin crearProyecto(proyecto = {})
-    .jumbotron.jumbotron-fluid
-        form.form-inline(action=`/nuevo-proyecto/${proyecto.id || ''}` method="POST")
-            .form-group.mx-sm-3.mb-2
-            .container
+    form.agregar-proyecto(action=`/nuevo-proyecto/${proyecto.id || ''}` method="POST")
+        .jumbotron
+            .form-group
+                input.form-control.form-control-lg(value=proyecto.nombre type="text" id="nombre" name="nombre" placeholder="Nombre Proyecto")
+            
+            .form-group
+                input.form-control.form-control-lg(value=proyecto.responsable type='text', name="responsable" id='responsable' placeholder='Nombre responsable') 
                 
-                label(for="nombre")
-                    input.form-control.form-control-lg(value=proyecto.nombre type="text" id='nombre' name="nombre"
-                    placeholder="Nombre Proyecto")
-                
-                label
-                   input.btn.btn-primary.btn-lg.btn-block.m-5(type="submit", value=`${proyecto.nombre ? 'Guardar' : 'Agregar'}` class="boton")
+            .row
+                .col
+                    .form-group
+                        input.form-control.form-control-lg(value=proyecto.fechaInicio type='date', name="fechaInicio" id='fechaInicio') 
+                .col
+                    .form-group
+                        input.form-control.form-control-lg(value=proyecto.fechaFinal type='date', name="fechaFinal" id='fechaFinal') 
 
-                
+
+            .campo.enviar
+                button.btn.btn-success.btn-lg.btn-block(type="submit" value=`${proyecto.responsable ? 'Guardar' : 'Agregar'}`) agregar
+            p#demo={obj} 
+
+        

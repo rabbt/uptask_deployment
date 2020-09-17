@@ -10,9 +10,9 @@ html(lang="en")
                 a.navbar-brand(href="#")
                     img(src="/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" alt="")
                     
-                h4 Administrador de Proyectos Dsi
-                p.h5=usuario.email
-        .container
+                h2 Administrador de Proyectos Dsi 
+                    p.h3=usuario.email
+        //.container
             .row
                 .col-lg-4.col-sm-4
                     .card-box.bg-blue
@@ -42,27 +42,41 @@ html(lang="en")
                         a.h3.card-box-footer(href="/cerrar-sesion") Cerrar sesion
                             i.fa.fa-arrow-circle-right
 
-                              
-                .col-lg-4.col-sm-4
-                    .card-box.bg-orange
+               
+                //.col-lg-4.col-sm-4
+                    .card-box.bg-red
                         .inner
-                            p 
+                            p nuevo boton
                         .icon
-                            i.fas.fa-tools
-                        a.card-box-footer(href="/empleados") Vista Empleado
+                            i.fas.fa-user-times
+                        a.card-box-footer(href="/cargar-usuarios") btnn 
                             i.fa.fa-arrow-circle-right
 
-                .col-lg-4.col-sm-4
-                    .card-box.bg-purple
-                        .inner
-                            p 
-                        .icon
-                            i.fab.fa-dev
-                        a.card-box-footer(href="/") Mostrar usuarios Activos
-                            i.fa.fa-arrow-circle-right
-
-        .container
-            block contenido
             
-            //- pre= vardump(proyectos) 
-        script(src="/dist/bunde.js")
+        .container
+            form.border.p-3.form(action="#")
+                h1.text-center Todos los Proyectos
+                #proyectos.proyectos
+                    if(proyectos.length)
+                        each proyecto in proyectos
+                            .container
+                                li.list-group-item.text-center
+                                    a.h2(href=`/proyectosempleados/${proyecto.url}`)=proyecto.nombre 
+                                    p.h4=proyecto.responsable
+                                    p.h3=proyecto.fecha
+                                    p=proyecto.fechaInicio
+                                    p=proyecto.fechaFinal
+                                    //.avance
+                                        .progress
+                                            .progress-bar.progress-bar-striped.bg-success(role="progressbar" )           
+                                                #porcentaje.porcentaje
+                block contenido
+
+            
+                //- pre= vardump(proyectos) 
+            script(src="/dist/bunde.js")
+
+
+            
+
+            block contenido2

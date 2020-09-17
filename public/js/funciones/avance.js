@@ -22,6 +22,8 @@ export const actualizarAvance = () => {
                 'Felicidades, has terminado tus tareas',
                 'success'
             )
+
+            
         }
     }
 }

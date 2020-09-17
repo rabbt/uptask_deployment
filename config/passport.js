@@ -12,7 +12,7 @@ passport.use(
             usernameField:'email',
             passwordField:'password'
         },
-        async(email,password, done) => {
+        async(email,password, done) => {     
            try {
                const usuario = await Usuarios.findOne({
                    where: { email: email,
